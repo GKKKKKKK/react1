@@ -45,7 +45,7 @@ const DetailsContainer = ({
   return (
     <Box sx={{ maxWidth: "900px", mx: "auto", mt: 4 }}>
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <Button variant="outlined" onClick={setShowDetails(false)}>
+        <Button variant="outlined" onClick={() => setShowDetails(false)}>
           Back to Table
         </Button>
         <Button variant="outlined">Create PDF</Button>
