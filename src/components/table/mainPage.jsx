@@ -68,9 +68,10 @@ function Index() {
     fetch(`${apiUrl}/api/data`)
       .then((res) => res.json())
       .then((data) => {
-        const withIds = data.map((row) => ({
+        const withIds = data.map((row, idx) => ({
           ...row,
           uniqueId: generateUniqueId(),
+          ID: idx + 1,
         }));
         setRows(withIds);
       });
@@ -99,8 +100,8 @@ function Index() {
   useEffect(() => {
     const startIdx = page * rowsPerPage;
     setEndIdx(startIdx + rowsPerPage);
-    setPagedRows(filteredRows.slice(startIdx, endIdx));
-  }, [filteredRows]);
+    setPagedRows(filteredRows.slice(startIdx, startIdx + rowsPerPage));
+  }, [filteredRows, page, rowsPerPage]);
 
   // Handlers
   const handleRowSelect = (uniqueId) => {
