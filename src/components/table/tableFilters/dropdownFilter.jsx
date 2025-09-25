@@ -15,7 +15,6 @@ const DropdownFilter = ({
         label={label}
         onChange={(e) => {
           setFilterValue(e.target.value);
-          setPage(0);
         }}
       >
         {columnNames.map((p) => (
