@@ -66,7 +66,7 @@ const TableFilter = ({ rows, setFilteredRows, setUpdate, setSearchStr }) => {
     return ["All", ...Array.from(set)];
   };
   const platforms = useMemo(() => {
-    return filterByColumn("Technology Platform");
+    return filterByColumn("Technology platform");
   }, [rows]);
   const tag1s = useMemo(() => {
     return filterByColumn("Tag 1");
