@@ -13,18 +13,18 @@ const CustomTableBody = ({
       {pagedRows.map((row) => (
         <TableRow
           hover
-          key={row.uniqueId}
-          selected={selectedRowId === row.uniqueId}
-          onClick={() => handleRowSelect(row.uniqueId)}
+          key={row["ID"]}
+          selected={selectedRowId === row["ID"]}
+          onClick={() => handleRowSelect(row["ID"])}
           sx={(theme) => ({
             cursor: "pointer",
             transition: "background-color 0.2s",
             backgroundColor:
-              selectedRowId === row.uniqueId
+              selectedRowId === row["ID"]
                 ? theme.palette.primary.main
                 : undefined,
             color:
-              selectedRowId === row.uniqueId
+              selectedRowId === row["ID"]
                 ? theme.palette.primary.contrastText
                 : undefined,
           })}

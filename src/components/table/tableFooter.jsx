@@ -60,7 +60,7 @@ const TablePagination = ({
           label="Rows per page"
           onChange={handleRowsPerPageChange}
         >
-          {[5, 10, 20, 50, 100].map((num) => (
+          {[5, 10, 20].map((num) => (
             <MenuItem key={num} value={num}>
               {num}
             </MenuItem>

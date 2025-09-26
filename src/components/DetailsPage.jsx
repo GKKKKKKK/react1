@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { apiUrl } from "../App";
+import {dataApiUrl } from "../App";
 // For PDF download
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -46,7 +46,7 @@ export default function DetailsPage() {
   const [row, setRow] = useState(null);
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/data`)
+    fetch(`${dataApiUrlapiUrl}/data`)
       .then((res) => res.json())
       .then((data) => setRow(data[parseInt(id, 10) - 1]));
   }, [id]);

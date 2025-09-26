@@ -4,8 +4,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Index from "./components/table/mainPage";
 
-export const apiUrl = "http://localhost:3001";
-// export const apiUrl = "https://57zzacs2v9.execute-api.eu-west-2.amazonaws.com/data";
+//export const apiUrl = "http://localhost:3001";
+export const dataApiUrl = "https://57zzacs2v9.execute-api.eu-west-2.amazonaws.com";
+export const imageApiUrl = "https://y6h7ldgm6j.execute-api.eu-west-2.amazonaws.com";
 
 function App() {
   return (

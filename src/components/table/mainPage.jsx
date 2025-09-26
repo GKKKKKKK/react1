@@ -5,7 +5,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
-import { apiUrl } from "../../App";
+import { dataApiUrl } from "../../App";
 import TableHeader from "./tableHeader/tableHeader";
 import DetailsContainer from "../details/detailsContainer";
 import CustomTableBody from "./tableBody";
@@ -15,7 +15,7 @@ import { Button, Table } from "@mui/material";
 import TableCtxProvider from "./tableContext";
 import CreateEntry from "./createEntry/createEntry";
 const allColumns = [
-  "Number",
+  "ID",
   "Technology platform",
   "Insight name",
   "Company",
@@ -37,17 +37,52 @@ const allColumns = [
   "Additional notes",
   "Status update",
   "Recommended",
+  "New entry",
+  "Image 1",
+  "Image 2",
+  "Image 3"
 ];
 
+function formatRow(row) {
+  return {
+    "ID": row.id, //db primary key
+    "Technology platform": row.technology_platform,
+    "Insight name": row.insight_name,
+    "Tag 1": row.tag1,
+    "Tag 2": row.tag2,
+    "Tag 3": row.tag3,
+    "Description of technology": row.description,
+    "Anticipated TRL": row.anticipated_trl,
+    "Company": row.company,
+    "Owner/named contact": row.owner_contact,
+    "Country": row.country,
+    "Relevance to paper sacks": row.relevance,
+    "Environmental credentials": row.environmental_credentials,
+    "Current status": row.current_status,
+    "Potential challenges and points requiring further investigation": row.challenges,
+    "General contact details": row.general_contact,
+    "Email contact if available": row.email,
+    "Web pages": row.web_pages,
+    "Year of entry into the database": row.year_of_entry,
+    "Additional notes": row.additional_notes,
+    "Status update": row.status_update,
+    "Recommended": row.recommended,
+    "New entry": row.new_entry,
+    "Image 1": row.s3key1,
+    "Image 2": row.s3key2,
+    "Image 3": row.s3key3
+  };
+}
+
+
 const defaultColumns = [
-  "ID", // new column for unique id
   "Insight name",
   "Technology platform",
   "Tag 1",
   "Tag 2",
   "Tag 3",
   "Description of technology",
-  "Anticipated TRL",
+  "Anticipated TRL"
 ];
 
 function Index() {
@@ -65,21 +100,16 @@ function Index() {
 
   // Helper to fetch table data
   const fetchTableData = () => {
-    fetch(`${apiUrl}/api/data`)
+    fetch(`${dataApiUrl}/data`)
       .then((res) => res.json())
       .then((data) => {
-        const withIds = data.map((row, idx) => ({
-          ...row,
-          uniqueId: generateUniqueId(),
-          ID: idx + 1,
-        }));
-        setRows(withIds);
-      });
+        console.log("Raw API data:", data);
+        const formatted = (data.rows || []).map(formatRow);
+        console.log("Formatted rows:", formatted);
+        setRows(formatted);
+      })
+      .catch((err) => console.error("Error fetching data:", err));
   };
-  // Helper to generate a unique id
-  function generateUniqueId() {
-    return "_" + Math.random().toString(36).substr(2, 9);
-  }
 
   useEffect(() => {
     fetchTableData();
@@ -104,13 +134,13 @@ function Index() {
   }, [filteredRows, page, rowsPerPage]);
 
   // Handlers
-  const handleRowSelect = (uniqueId) => {
-    setSelectedRowId(uniqueId);
+  const handleRowSelect = (id) => {
+    setSelectedRowId(id);
   };
   const handleDetailsClick = () => {
     if (selectedRowId) {
-      // Find the row in the full, unfiltered data by uniqueId
-      const row = rows.find((row) => row.uniqueId === selectedRowId);
+      // Find the row in the full, unfiltered data by ID
+      const row = rows.find((row) => row["ID"] === selectedRowId);
       setSelectedRowData(row);
       setShowDetails(true);
     }

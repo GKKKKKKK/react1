@@ -7,7 +7,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { apiUrl } from "../../App";
+import { dataApiUrl } from "../../App";
 const EditDetails = ({
   showDetails,
   allColumns,

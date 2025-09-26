@@ -10,6 +10,8 @@ import Checkbox from "@mui/material/Checkbox";
 import EditDetails from "./editDetails";
 import { useState } from "react";
 import { useTableCtx } from "../table/tableContext";
+import S3Images from "../images/ImageGen";
+
 const DetailsContainer = ({
   selectedRowData,
   setRows,
@@ -93,7 +95,13 @@ const DetailsContainer = ({
                   <TableCell sx={{ fontWeight: "bold", width: 220 }}>
                     {col}
                   </TableCell>
-                  <TableCell>{selectedRowData[col] || ""}</TableCell>
+                  <TableCell>
+                    {col.startsWith("Image") && selectedRowData[col] ? (
+                      <S3Images keys={[selectedRowData[col]]} />
+                    ) : (
+                      selectedRowData[col] || ""
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -2,7 +2,7 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import CreateEntryDialog from "./createEntryDialog";
-import { apiUrl } from "../../../App";
+import { dataApiUrl } from "../../../App";
 import { useTableCtx } from "../tableContext";
 const CreateEntry = () => {
   const { allColumns, fetchTableData } =
