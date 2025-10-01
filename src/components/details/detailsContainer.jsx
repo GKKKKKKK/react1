@@ -12,6 +12,9 @@ import { useState } from "react";
 import { useTableCtx } from "../table/tableContext";
 import S3Images from "../images/ImageGen";
 
+// ⭐ NEW IMPORT
+import DeleteEntry from "./DeleteEntry";
+
 const DetailsContainer = ({
   selectedRowData,
   setRows,
@@ -19,31 +22,17 @@ const DetailsContainer = ({
   setSelectedRowData,
   setShowDetails,
   setSelectedRowId,
+  // ⭐ NEW PROP
+  fetchTableData,
 }) => {
   const [editOpen, setEditOpen] = useState(false);
   const [editData, setEditData] = useState(selectedRowData);
   const { allColumns } = useTableCtx();
+
   const handleEditEntry = () => {
     setEditData(selectedRowData);
   };
-  const handleDeleteEntry = async () => {
-    const insightName = encodeURIComponent(selectedRowData?.["Insight name"]);
-    if (!insightName) return;
-    await fetch(`apiUrl/api/entries/${insightName}`, { method: "DELETE" });
-    // ...existing code (all hooks, handlers, and logic) should be inside this function...
-    setShowDetails(false);
-    setSelectedRowId(null);
-    setSelectedRowData(null);
-    // Optimistically remove from local state for instant UI update
-    setRows((prevRows) =>
-      prevRows.filter(
-        (row) => row["Insight name"] !== selectedRowData["Insight name"]
-      )
-    );
-    setTimeout(() => {
-      fetchTableData();
-    }, 300);
-  };
+
   return (
     <Box sx={{ maxWidth: "900px", mx: "auto", mt: 4 }}>
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -61,9 +50,16 @@ const DetailsContainer = ({
         >
           Edit Entry
         </Button>
-        <Button variant="outlined" color="error" onClick={handleDeleteEntry}>
-          Delete Entry
-        </Button>
+
+        {/* ⭐ REPLACED OLD INLINE DELETE WITH COMPONENT */}
+        <DeleteEntry
+          selectedRowData={selectedRowData}
+          setShowDetails={setShowDetails}
+          setSelectedRowId={setSelectedRowId}
+          setSelectedRowData={setSelectedRowData}
+          fetchTableData={fetchTableData}
+        />
+
         <FormControlLabel
           control={
             <Checkbox

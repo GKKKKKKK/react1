@@ -1,3 +1,4 @@
+// ts-check
 import { useState } from "react";
 import {
   Dialog,
@@ -6,8 +7,40 @@ import {
   DialogActions,
   TextField,
   Button,
+  MenuItem,
 } from "@mui/material";
+import {formatRow} from "../table/utils";
 import { dataApiUrl } from "../../App";
+
+// 🔑 Map UI labels → DB column names
+const fieldMap = {
+  "Technology platform": "technology_platform",
+  "Insight name": "insight_name",
+  "Company": "company",
+  "Owner/named contact": "owner_contact",
+  "Country": "country",
+  "Tag 1": "tag1",
+  "Tag 2": "tag2",
+  "Tag 3": "tag3",
+  "Anticipated TRL": "anticipated_trl",
+  "Description of technology": "description",
+  "Relevance to paper sacks": "relevance",
+  "Environmental credentials": "environmental_credentials",
+  "Current status": "current_status",
+  "Potential challenges and points requiring further investigation": "challenges",
+  "General contact details": "general_contact",
+  "Email contact if available": "email",
+  "Web pages": "web_pages",
+  "Year of entry into the database": "year_of_entry",
+  "Additional notes": "additional_notes",
+  "Status update": "status_update",
+  "Recommended": "recommended",
+  "New entry": "new_entry",
+  "Image 1": "s3key1",
+  "Image 2": "s3key2",
+  "Image 3": "s3key3",
+};
+
 const EditDetails = ({
   showDetails,
   allColumns,
@@ -18,69 +51,89 @@ const EditDetails = ({
   editData,
   setEditData,
 }) => {
-  const [originalInsightName, setOriginalInsightName] = useState(null);
-  const handleEditEntry = () => {
-    setEditData(selectedRowData);
-    setOriginalInsightName(selectedRowData["Insight name"]);
-    setEditOpen(true);
-  };
   const handleEditChange = (field, value) => {
     setEditData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleEditSave = async () => {
-    const insightName = encodeURIComponent(
-      originalInsightName || editData["Insight name"]
-    );
     try {
-      const response = await fetch(`${apiUrl}/api/entries/${insightName}`, {
+      // 🔑 Map UI labels → DB column names
+      const mappedData = Object.fromEntries(
+        Object.entries(editData).map(([label, value]) => [
+          fieldMap[label] || label,
+          value ?? "",
+        ])
+      );
+      console.log("Edit payload being sent:", mappedData);
+
+      const response = await fetch(`${dataApiUrl}/entries`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editData),
+        body: JSON.stringify(mappedData),
       });
+
       if (!response.ok) {
         alert("Failed to save changes!");
         return;
       }
+
       setEditOpen(false);
-      setOriginalInsightName(null);
-      // Fetch new data, then update details if needed
-      fetch(`${apiUrl}/api/data`)
+
+      // 🔄 Refresh table from backend
+      fetch(`${dataApiUrl}/data`)
         .then((res) => res.json())
         .then((data) => {
-          const withIds = data.map((row) => ({
-            ...row,
-            uniqueId: row.uniqueId || row["Insight name"] + Math.random(),
-          }));
-          setRows(withIds);
-          if (showDetails && originalInsightName) {
-            const updated = withIds.find(
-              (row) => row["Insight name"] === originalInsightName
+          const formatted = (data.rows || []).map(formatRow);
+          setRows(formatted);
+          if (showDetails && mappedData.insight_name) {
+            const updated = formatted.find(
+              (row) => row["Insight name"] === mappedData.insight_name
             );
             if (updated) setSelectedRowData(updated);
           }
         });
     } catch (err) {
-      alert("Network or server error!", err);
+      console.error("Edit failed:", err);
+      alert("Network or server error!");
     }
   };
   return (
-    <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+    <Dialog open={editOpen} onClose={() => setEditOpen(false)} fullWidth>
       <DialogTitle>Edit Entry</DialogTitle>
       <DialogContent>
         {allColumns
           .filter((col) => col !== "ID")
-          .map((col) => (
-            <TextField
-              key={col}
-              margin="dense"
-              label={col}
-              fullWidth
-              value={editData?.[col] || ""}
-              onChange={(e) => handleEditChange(col, e.target.value)}
-              sx={{ mb: 1 }}
-            />
-          ))}
+          .map((col) => {
+            if (col === "Recommended" || col === "New entry") {
+              return (
+                <TextField
+                  key={col}
+                  select
+                  margin="dense"
+                  label={col}
+                  fullWidth
+                  value={editData?.[col] || "YES"}
+                  onChange={(e) => handleEditChange(col, e.target.value)}
+                  sx={{ mb: 1 }}
+                >
+                  <MenuItem value="YES">YES</MenuItem>
+                  <MenuItem value="NO">NO</MenuItem>
+                </TextField>
+              );
+            }
+
+            return (
+              <TextField
+                key={col}
+                margin="dense"
+                label={col}
+                fullWidth
+                value={editData?.[col] || ""}
+                onChange={(e) => handleEditChange(col, e.target.value)}
+                sx={{ mb: 1 }}
+              />
+            );
+          })}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setEditOpen(false)}>Cancel</Button>
@@ -91,4 +144,5 @@ const EditDetails = ({
     </Dialog>
   );
 };
+
 export default EditDetails;

@@ -50,13 +50,21 @@ const TableFilter = ({ rows, setFilteredRows, setUpdate, setSearchStr }) => {
           row["Description of technology"]
             ?.toLowerCase()
             .includes(descSearch.toLowerCase());
+
+        const matchesNewEntry =
+          newEntryFilter === "All" ||
+          (row["New entry"] &&
+            row["New entry"].toString().trim().toUpperCase() === newEntryFilter);
+
+
         return (
           matchesPlatform &&
           matchesTag1 &&
           matchesTag2 &&
           matchesTag3 &&
-          matchesTRL &&
-          matchesDesc
+          matchesDesc &&
+          matchesTRL  &&
+          matchesNewEntry
         );
       });
   };
@@ -85,13 +93,19 @@ const TableFilter = ({ rows, setFilteredRows, setUpdate, setSearchStr }) => {
       "Unknown",
       "Not applicable",
     ];
+  
   }, []);
+
+  const newEntryOptions = ["All", "YES", "NO"];
+
+
   const [descSearch, setDescSearch] = useState("");
   const [platformFilter, setPlatformFilter] = useState("All");
   const [tag1Filter, setTag1Filter] = useState("All");
   const [tag2Filter, setTag2Filter] = useState("All");
   const [tag3Filter, setTag3Filter] = useState("All");
   const [trlFilter, setTrlFilter] = useState("All");
+  const [newEntryFilter, setNewEntryFilter] = useState("All");
 
   useEffect(() => {
     console.log("Applying filters:", {
@@ -162,6 +176,12 @@ const TableFilter = ({ rows, setFilteredRows, setUpdate, setSearchStr }) => {
         setFilterValue={setTrlFilter}
         label="Anticipated TRL"
         columnNames={trls}
+      />
+      <DropdownFilter
+        filterValue={newEntryFilter}
+        setFilterValue={setNewEntryFilter}
+        label="New entry"
+        columnNames={newEntryOptions}
       />
     </Box>
   );
