@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Index from "./components/table/mainPage";
 import MainBanner from "./components/banner/MainBanner";
+import AboutDB from "./components/aboutDB/aboutDB";
 
 
 //export const apiUrl = "http://localhost:3001";
@@ -30,22 +31,7 @@ function App() {
             <Typography variant="h2" align="center" gutterBottom>
               Demo
             </Typography>
-            <Box
-              sx={{
-                borderRadius: 2,
-                p: 4,
-                boxShadow: 2,
-                maxWidth: 500,
-                width: "100%",
-                mb: 4,
-              }}
-            >
-              <Typography variant="body1" align="center">
-                This is a paragraph that will contain the information about the
-                website and how to use the table. Maybe replace with a button that brings
-                up a dialog with more information for each category (see slides).
-              </Typography>
-            </Box>
+            <AboutDB />
             <Index />
           </Box>
         }
