@@ -5,13 +5,12 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import EditDetails from "./editDetails";
 import { useState } from "react";
 import { useTableCtx } from "../table/tableContext";
 import S3Images from "../images/ImageGen";
 import DeleteEntry from "./DeleteEntry";
+import CreatePDF from "./CreatePDF";
 
 const DetailsContainer = ({
   selectedRowData,
@@ -30,13 +29,18 @@ const DetailsContainer = ({
     setEditData(selectedRowData);
   };
 
+
+  const [imageUrls, setImageUrls] = useState([]);
   return (
     <Box sx={{ maxWidth: "900px", mx: "auto", mt: 4 }}>
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
         <Button variant="outlined" onClick={() => setShowDetails(false)}>
           Back to Table
         </Button>
-        <Button variant="outlined">Create PDF</Button>
+        <CreatePDF 
+          selectedRowData={selectedRowData} 
+          allColumns={allColumns} 
+        />
         <Button
           variant="outlined"
           color="primary"
@@ -68,9 +72,9 @@ const DetailsContainer = ({
           <Table size="small">
             <TableBody>
               {allColumns
-                .filter((col) => col !== "ID") // 🚫 hide ID
+                .filter((col) => col !== "ID") // hide ID
                 .map((col) => {
-                  // 🚫 hide empty image rows
+                  // hide empty image rows
                   if (col.startsWith("Image") && !selectedRowData[col]) {
                     return null;
                   }
@@ -82,7 +86,10 @@ const DetailsContainer = ({
                       </TableCell>
                       <TableCell>
                         {col.startsWith("Image") ? (
-                          <S3Images keys={[selectedRowData[col]]} />
+                          <S3Images 
+                            keys={[selectedRowData[col]]}
+                            
+                          />
                         ) : (
                           selectedRowData[col] || ""
                         )}
