@@ -1,7 +1,5 @@
 // ts-check
 import React, { useEffect, useState } from "react";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
@@ -15,6 +13,7 @@ import { Button, Table } from "@mui/material";
 import TableCtxProvider from "./tableContext";
 import CreateEntry from "./createEntry/createEntry";
 import { formatRow } from "../table/utils";
+
 const allColumns = [
   "ID",
   "Technology platform",
@@ -41,9 +40,8 @@ const allColumns = [
   "New entry",
   "Image 1",
   "Image 2",
-  "Image 3"
+  "Image 3",
 ];
-
 
 const defaultColumns = [
   "Insight name",
@@ -52,7 +50,7 @@ const defaultColumns = [
   "Tag 2",
   "Tag 3",
   "Description of technology",
-  "Anticipated TRL"
+  "Anticipated TRL",
 ];
 
 function Index() {
@@ -62,20 +60,17 @@ function Index() {
   const [endIdx, setEndIdx] = useState(10);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
-  const [update, setUpdate] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [searchStr, setSearchStr] = useState("");
 
-  // Helper to fetch table data
+  // Fetch table data
   const fetchTableData = () => {
     fetch(`${dataApiUrl}/data`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Raw API data:", data);
         const formatted = (data.rows || []).map(formatRow);
-        console.log("Formatted rows:", formatted);
         setRows(formatted);
       })
       .catch((err) => console.error("Error fetching data:", err));
@@ -85,16 +80,15 @@ function Index() {
     fetchTableData();
   }, []);
 
-  // Filtering logic
+  // When rows change, reset filteredRows
   useEffect(() => {
-    console.log("Updating filtered rows", update);
     setFilteredRows(rows);
   }, [rows]);
 
-  // Reset page to 0 whenever any filter/search changes
+  // Reset page when filters change
   useEffect(() => {
     setPage(0);
-  }, [update]);
+  }, [filteredRows]);
 
   // Pagination logic
   useEffect(() => {
@@ -107,22 +101,21 @@ function Index() {
   const handleRowSelect = (id) => {
     setSelectedRowId(id);
   };
+
   const handleDetailsClick = () => {
     if (selectedRowId) {
-      // Find the row in the full, unfiltered data by ID
       const row = rows.find((row) => row["ID"] === selectedRowId);
       setSelectedRowData(row);
       setShowDetails(true);
     }
   };
+
   const handleBackToTable = () => {
     setShowDetails(false);
   };
 
-  // Filter for showing only new entries
-  const [newEntryFilter, setNewEntryFilter] = useState(false);
-
   const loading = rows.length === 0;
+
   return (
     <TableCtxProvider
       value={{
@@ -145,24 +138,19 @@ function Index() {
             mx: "auto",
           }}
         >
-          <CreateEntry />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={newEntryFilter}
-                onChange={(e) => setNewEntryFilter(e.target.checked)}
-                color="primary"
-              />
-            }
-            label="Show only New Entries"
-            sx={{ mt: 2 }}
-          />
+          {/* Create New Entry Button */}
+          <Box sx={{ mb: 3 }}>
+            <CreateEntry />
+          </Box>
+
+          {/* Filters */}
           <TableFilter
             rows={rows}
             setFilteredRows={setFilteredRows}
-            setUpdate={setUpdate}
             setSearchStr={setSearchStr}
           />
+
+          {/* Table */}
           <TableContainer
             component={Paper}
             sx={{ px: 8, maxWidth: "90vw", mx: "auto" }}
@@ -171,17 +159,15 @@ function Index() {
               <TableHeader defaultColumns={defaultColumns} />
               <CustomTableBody
                 defaultColumns={defaultColumns}
-                pagedRows={
-                  newEntryFilter
-                    ? pagedRows.filter((r) => r["New Entry"])
-                    : pagedRows
-                }
+                pagedRows={pagedRows}
                 selectedRowId={selectedRowId}
                 handleRowSelect={handleRowSelect}
                 searchStr={searchStr}
               />
             </Table>
           </TableContainer>
+
+          {/* Pagination */}
           <TablePagination
             page={page}
             filteredRows={filteredRows}
@@ -190,9 +176,11 @@ function Index() {
             rowsPerPage={rowsPerPage}
             setRowsPerPage={setRowsPerPage}
           />
+
+          {/* Details Button */}
           <Button
             variant="contained"
-            sx={{ ml: 4 }}
+            sx={{ ml: 4, mt: 2 }}
             disabled={loading || !selectedRowId}
             onClick={handleDetailsClick}
           >

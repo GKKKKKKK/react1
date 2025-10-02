@@ -11,11 +11,12 @@ const CustomTableBody = ({
   return (
     <TableBody>
       {pagedRows.map((row) => (
+        //console.log("Row in TableBody:", row),
         <TableRow
           hover
-          key={row["ID"]}
-          selected={selectedRowId === row["ID"]}
-          onClick={() => handleRowSelect(row["ID"])}
+          key={`row-${row["ID"]}`}
+          selected={Number(selectedRowId) === Number(row["ID"])}
+          onClick={() => handleRowSelect(Number(row["ID"]))}
           sx={(theme) => ({
             cursor: "pointer",
             transition: "background-color 0.2s",

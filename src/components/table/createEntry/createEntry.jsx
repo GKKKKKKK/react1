@@ -38,15 +38,32 @@ const CreateEntry = () => {
   const { allColumns, fetchTableData } = useTableCtx();
   const [createOpen, setCreateOpen] = useState(false);
   const [createData, setCreateData] = useState(() =>
-    Object.fromEntries(allColumns.filter((col) => col !== "ID").map((col) => [col, ""]))
+    Object.fromEntries(
+      allColumns
+        .filter((col) => col !== "ID")
+        .map((col) =>
+          col === "Recommended" || col === "New entry"
+            ? [col, "YES"] // default YES
+            : [col, ""]
+        )
+    )
   );
 
   const handleCreateOpen = () => {
     setCreateData(
-      Object.fromEntries(allColumns.filter((col) => col !== "ID").map((col) => [col, ""]))
+      Object.fromEntries(
+        allColumns
+          .filter((col) => col !== "ID")
+          .map((col) =>
+            col === "Recommended" || col === "New entry"
+              ? [col, "YES"] // default YES
+              : [col, ""]
+          )
+      )
     );
     setCreateOpen(true);
   };
+
 
   const handleCreateChange = (field, value) => {
     setCreateData((prev) => ({ ...prev, [field]: value }));
@@ -54,7 +71,7 @@ const CreateEntry = () => {
 
   const handleCreateSave = async () => {
     try {
-      // 🔑 NEW: Convert UI labels to DB column names before sending
+      // NEW: Convert UI labels to DB column names before sending
       const mappedData = Object.fromEntries(
         Object.entries(createData).map(([label, value]) => [
           fieldMap[label] || label,

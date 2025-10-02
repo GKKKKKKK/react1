@@ -11,8 +11,6 @@ import EditDetails from "./editDetails";
 import { useState } from "react";
 import { useTableCtx } from "../table/tableContext";
 import S3Images from "../images/ImageGen";
-
-// ⭐ NEW IMPORT
 import DeleteEntry from "./DeleteEntry";
 
 const DetailsContainer = ({
@@ -22,7 +20,6 @@ const DetailsContainer = ({
   setSelectedRowData,
   setShowDetails,
   setSelectedRowId,
-  // ⭐ NEW PROP
   fetchTableData,
 }) => {
   const [editOpen, setEditOpen] = useState(false);
@@ -51,7 +48,6 @@ const DetailsContainer = ({
           Edit Entry
         </Button>
 
-        {/* ⭐ REPLACED OLD INLINE DELETE WITH COMPONENT */}
         <DeleteEntry
           selectedRowData={selectedRowData}
           setShowDetails={setShowDetails}
@@ -60,22 +56,7 @@ const DetailsContainer = ({
           fetchTableData={fetchTableData}
         />
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectedRowData?.["New Entry"] || false}
-              onChange={(e) => {
-                setSelectedRowData({
-                  ...selectedRowData,
-                  ["New Entry"]: e.target.checked,
-                });
-              }}
-              color="primary"
-            />
-          }
-          label="New Entry"
-          sx={{ ml: 2 }}
-        />
+
       </Box>
       <Paper sx={{ p: 3 }}>
         <h2>
@@ -86,20 +67,30 @@ const DetailsContainer = ({
         {selectedRowData ? (
           <Table size="small">
             <TableBody>
-              {allColumns.map((col) => (
-                <TableRow key={col}>
-                  <TableCell sx={{ fontWeight: "bold", width: 220 }}>
-                    {col}
-                  </TableCell>
-                  <TableCell>
-                    {col.startsWith("Image") && selectedRowData[col] ? (
-                      <S3Images keys={[selectedRowData[col]]} />
-                    ) : (
-                      selectedRowData[col] || ""
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {allColumns
+                .filter((col) => col !== "ID") // 🚫 hide ID
+                .map((col) => {
+                  // 🚫 hide empty image rows
+                  if (col.startsWith("Image") && !selectedRowData[col]) {
+                    return null;
+                  }
+
+                  return (
+                    <TableRow key={col}>
+                      <TableCell sx={{ fontWeight: "bold", width: 220 }}>
+                        {col}
+                      </TableCell>
+                      <TableCell>
+                        {col.startsWith("Image") ? (
+                          <S3Images keys={[selectedRowData[col]]} />
+                        ) : (
+                          selectedRowData[col] || ""
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+
             </TableBody>
           </Table>
         ) : (
