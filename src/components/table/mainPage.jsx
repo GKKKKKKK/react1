@@ -49,7 +49,7 @@ const defaultColumns = [
   "Tag 3",
   "Description of technology",
   "Anticipated TRL",
-    "Year of entry into the database",
+  "Year of entry into the database",
 ];
 
 function Index() {
@@ -136,10 +136,11 @@ function Index() {
             alignItems: "stretch",
             mb: 2,
             mx: "auto",
+            padding: "20px",
           }}
         >
           {/* Create New Entry Button */}
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 3 }} display={"flex"} justifyContent={"center"}>
             <CreateEntry />
           </Box>
 
