@@ -43,8 +43,8 @@ const CustomTableBody = ({
                     display: "-webkit-box",
                     WebkitLineClamp: 6, // 6 lines
                     WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    overflowY: "scroll",
+                    textOverflow: "ellipses",
                     whiteSpace: "normal",
                   }}
                 >
