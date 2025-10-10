@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import DetailsPage from "./components/DetailsPage";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Index from "./components/table/mainPage";
 import MainBanner from "./components/banner/MainBanner";
 import AboutDB from "./components/aboutDB/aboutDB";
+
 
 
 //export const apiUrl = "http://localhost:3001";
@@ -21,17 +21,28 @@ function App() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: "100vh",
-              width: "100vw",
+              alignItems: "stretch",  // let children fill width
+              gap: 3,
+              mb: 4,
+              width: "100%",
+          //  maxWidth: { xs: "98%", sm: "95%", md: "90%", lg: "80%" },
+              mx: "auto",
+              px: { xs: 1, sm: 2, md: 4 },
+              boxSizing: "border-box",
             }}
           >
             <MainBanner />
-            <Typography variant="h2" align="center" gutterBottom>
-              Demo
-            </Typography>
-            <AboutDB />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+
+              <AboutDB />
+              
+            </Box>
             <Index />
           </Box>
         }

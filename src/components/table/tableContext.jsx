@@ -10,7 +10,7 @@ const TableCtx = createContext(null);
  * You can still pass other values via `value` (fetchTableData, rows, etc.).
  */
 const TableCtxProvider = ({ children, value = {} }) => {
-  // 🔸 Persisted filter state
+  //  Persisted filter state
   const [descSearch, setDescSearch] = useState("");
   const [platformFilter, setPlatformFilter] = useState("All");
   const [tag1Filter, setTag1Filter] = useState("All");

@@ -1,4 +1,4 @@
-// ts-check
+
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
@@ -13,6 +13,7 @@ import { Button, Table } from "@mui/material";
 import TableCtxProvider from "./tableContext";
 import CreateEntry from "./createEntry/createEntry";
 import { formatRow } from "../table/utils";
+import { fetchWithRetry } from "../table/utils";
 
 const allColumns = [
   "ID",
@@ -51,6 +52,7 @@ const defaultColumns = [
   "Tag 3",
   "Description of technology",
   "Anticipated TRL",
+  "Year of entry into the database",
 ];
 
 function Index() {
@@ -67,13 +69,14 @@ function Index() {
 
   // Fetch table data
   const fetchTableData = () => {
-    fetch(`${dataApiUrl}/data`)
-      .then((res) => res.json())
+    fetchWithRetry(`${dataApiUrl}/data`, {}, 3, 2000)
       .then((data) => {
         const formatted = (data.rows || []).map(formatRow);
         setRows(formatted);
       })
-      .catch((err) => console.error("Error fetching data:", err));
+      .catch((err) => {
+        console.error("Error fetching data after retries:", err);
+      });
   };
 
   useEffect(() => {
@@ -102,10 +105,11 @@ function Index() {
     setSelectedRowId(id);
   };
 
-  const handleDetailsClick = () => {
-    if (selectedRowId) {
-      const row = rows.find((row) => row["ID"] === selectedRowId);
-      setSelectedRowData(row);
+  const handleDetailsClick = (rowParam) => {
+    const rowToShow = rowParam || rows.find((r) => r["ID"] === selectedRowId);
+    if (rowToShow) {
+      setSelectedRowId(rowToShow["ID"]);
+      setSelectedRowData(rowToShow);
       setShowDetails(true);
     }
   };
@@ -132,9 +136,8 @@ function Index() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "stretch",
             mb: 2,
-            maxWidth: "90vw",
             mx: "auto",
           }}
         >
@@ -149,43 +152,65 @@ function Index() {
             setFilteredRows={setFilteredRows}
             setSearchStr={setSearchStr}
           />
-
+          {/* Pagination */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              minWidth: "200px",
+              alignItems: "center",
+              height: "56px",
+              pr: 2,
+              mb: 2,
+            }}
+          > 
+            <TablePagination
+              page={page}
+              filteredRows={filteredRows}
+              endIdx={endIdx}
+              setPage={setPage}
+              rowsPerPage={rowsPerPage}
+              setRowsPerPage={setRowsPerPage}
+            />
+          </Box>
           {/* Table */}
           <TableContainer
             component={Paper}
-            sx={{ px: 8, maxWidth: "90vw", mx: "auto" }}
+            sx={{
+              width: "100%",
+              overflowX: "auto",
+              borderRadius: 2,
+              px: { xs: 1, sm: 2},
+              WebkitOverflowScrolling: "touch",
+            }}
           >
-            <Table size="small">
-              <TableHeader defaultColumns={defaultColumns} />
-              <CustomTableBody
-                defaultColumns={defaultColumns}
-                pagedRows={pagedRows}
-                selectedRowId={selectedRowId}
-                handleRowSelect={handleRowSelect}
-                searchStr={searchStr}
-              />
-            </Table>
+            <Box
+              sx={{
+                display: "inline-block",
+                minWidth: 900, // force scroll if screen < 900px
+              }}
+            >
+              <Table
+                size="small"
+                sx={{
+                  width: "100%",
+                  tableLayout: "auto",
+                  borderCollapse: "collapse",
+                }}
+              >
+                <TableHeader defaultColumns={defaultColumns} />
+                <CustomTableBody
+                  defaultColumns={defaultColumns}
+                  pagedRows={pagedRows}
+                  selectedRowId={selectedRowId}
+                  handleRowSelect={handleRowSelect}
+                  searchStr={searchStr}
+                  handleDetailsClick={handleDetailsClick}
+                />
+              </Table>
+            </Box>
           </TableContainer>
 
-          {/* Pagination */}
-          <TablePagination
-            page={page}
-            filteredRows={filteredRows}
-            endIdx={endIdx}
-            setPage={setPage}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
-          />
-
-          {/* Details Button */}
-          <Button
-            variant="contained"
-            sx={{ ml: 4, mt: 2 }}
-            disabled={loading || !selectedRowId}
-            onClick={handleDetailsClick}
-          >
-            Show Details
-          </Button>
         </Box>
       ) : (
         <DetailsContainer

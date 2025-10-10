@@ -40,3 +40,38 @@ export function formatRow(row) {
     "Image 3": row.s3key3,
   };
 }
+
+
+// utils/fetchWithRetry.js
+export async function fetchWithRetry(url, options = {}, retries = 3, delay = 2000) {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+
+      if (!res.ok) {
+        // If it's a warm-up 500/503 error, retry
+        if ([500, 503].includes(res.status) && attempt < retries - 1) {
+          console.warn(
+            `Fetch failed (status ${res.status}). Retrying in ${delay * (attempt + 1)} ms...`
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay * (attempt + 1)));
+          continue;
+        }
+
+        // Non-retryable error, throw
+        throw new Error(`Request failed with status ${res.status}`);
+      }
+
+      // Parse and return JSON if successful
+      return await res.json();
+    } catch (err) {
+      // Network or other fetch error
+      if (attempt < retries - 1) {
+        console.warn(`Fetch error: ${err.message}. Retrying in ${delay * (attempt + 1)} ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay * (attempt + 1)));
+      } else {
+        throw err;
+      }
+    }
+  }
+}

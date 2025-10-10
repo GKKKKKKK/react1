@@ -1,3 +1,5 @@
+import { Box } from "@mui/material";
+import { Button } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
@@ -6,7 +8,8 @@ const CustomTableBody = ({
   handleRowSelect,
   selectedRowId,
   defaultColumns,
-  searchStr
+  searchStr,
+  handleDetailsClick,
 }) => {
   return (
     <TableBody>
@@ -28,12 +31,25 @@ const CustomTableBody = ({
               selectedRowId === row["ID"]
                 ? theme.palette.primary.contrastText
                 : undefined,
+
+            
           })}
         >
           {defaultColumns.map((col) =>
             col === "Description of technology" ? (
               <TableCell className={col} key={col}>
-                {row[col] ? highlightText(row[col], searchStr) : ""}
+                <Box
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 6, // 6 lines
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  {row[col] ? highlightText(row[col], searchStr) : ""}
+                </Box>
               </TableCell>
             ) : (
               <TableCell className={col} key={col}>
@@ -41,6 +57,18 @@ const CustomTableBody = ({
               </TableCell>
             )
           )}
+          <TableCell align="center">
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation(); // prevent row click conflict
+                handleDetailsClick(row);
+              }}
+            >
+            +
+            </Button>
+          </TableCell>
         </TableRow>
       ))}
     </TableBody>

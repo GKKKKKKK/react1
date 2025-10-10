@@ -20,15 +20,9 @@ export default function MainBanner() {
   const [url, setUrl] = useState(null);
 
   useEffect(() => {
-    async function loadUrl() {
-      try {
-        const presignedUrl = await fetchPresignedUrl(bannerKey);
-        setUrl(presignedUrl);
-      } catch (err) {
-        console.error("Error fetching banner URL:", err);
-      }
-    }
-    loadUrl();
+    fetchPresignedUrl(bannerKey)
+      .then(setUrl)
+      .catch((err) => console.error("Banner error:", err));
   }, []);
 
   if (!url) return <p>Loading banner...</p>;
@@ -38,7 +32,14 @@ export default function MainBanner() {
       <img
         src={url}
         alt="TechDB Banner"
-        style={{ width: "100%", maxHeight: "250px", objectFit: "cover" }}
+        style={{
+          width: "100%",
+          height: "auto",
+          maxHeight: "250px",
+          objectFit: "cover",
+          display: "block",
+          borderRadius: "8px",
+        }}
       />
     </div>
   );

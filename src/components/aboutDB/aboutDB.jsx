@@ -8,7 +8,6 @@ function AboutDB() {
         borderRadius: 2,
         p: 4,
         boxShadow: 2,
-        maxWidth: 500,
         width: "100%",
         mb: 4,
       }}
