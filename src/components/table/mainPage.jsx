@@ -1,19 +1,16 @@
-
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
-import Paper from "@mui/material/Paper";
+import { Button, Table, Paper } from "@mui/material";
 import { dataApiUrl } from "../../App";
 import TableHeader from "./tableHeader/tableHeader";
 import DetailsContainer from "../details/detailsContainer";
 import CustomTableBody from "./tableBody";
 import TablePagination from "./tableFooter";
 import TableFilter from "./tableFilters/tableFilter";
-import { Button, Table } from "@mui/material";
 import TableCtxProvider from "./tableContext";
 import CreateEntry from "./createEntry/createEntry";
-import { formatRow } from "../table/utils";
-import { fetchWithRetry } from "../table/utils";
+import { formatRow, fetchWithRetry } from "../table/utils";
 
 const allColumns = [
   "ID",
@@ -52,7 +49,7 @@ const defaultColumns = [
   "Tag 3",
   "Description of technology",
   "Anticipated TRL",
-  "Year of entry into the database",
+    "Year of entry into the database",
 ];
 
 function Index() {
@@ -163,7 +160,7 @@ function Index() {
               pr: 2,
               mb: 2,
             }}
-          > 
+          >
             <TablePagination
               page={page}
               filteredRows={filteredRows}
@@ -180,14 +177,13 @@ function Index() {
               width: "100%",
               overflowX: "auto",
               borderRadius: 2,
-              px: { xs: 1, sm: 2},
+              px: { xs: 1, sm: 2 },
               WebkitOverflowScrolling: "touch",
             }}
           >
             <Box
               sx={{
                 display: "inline-block",
-                minWidth: 900, // force scroll if screen < 900px
               }}
             >
               <Table
@@ -210,7 +206,6 @@ function Index() {
               </Table>
             </Box>
           </TableContainer>
-
         </Box>
       ) : (
         <DetailsContainer
