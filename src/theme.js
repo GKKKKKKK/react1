@@ -9,24 +9,17 @@ const theme = createTheme({
       contrastText: "#ffffff",
     },
     background: {
-      default: "#ffffff",
+      default: "#c45a5aff",
       paper: "#ffffff",
     },
   },
 
   components: {
     // ✅ Table header (force stronger style override)
-    MuiTableHead: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#0D47A1 !important", // ensure override
-        },
-      },
-    },
     MuiTableCell: {
       styleOverrides: {
         head: {
-          backgroundColor: "#0D47A1 !important",
+          backgroundColor: "#0D47A1 ",
           color: "#ffffff",
           fontWeight: 700,
           fontSize: "0.95rem",
